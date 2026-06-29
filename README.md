@@ -8,7 +8,7 @@
 - 最小化到系统托盘图标，可快速唤起批注
 
 ## Arch系安装方式
-为Arch系Linux编写了PKGBUILD，可从Release获取，然后makepkg -si安装
+为Arch系Linux编写了PKGBUILD，可从Releases获取，然后makepkg -si安装
 
 ## 手动编译安装（通用）
 
