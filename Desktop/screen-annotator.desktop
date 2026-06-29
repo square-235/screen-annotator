@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=屏幕批注工具
+Comment=基于Qt的简单屏幕批注工具
+Exec=/usr/bin/screen-annotator
+Icon=screen-annotator
+Terminal=false
+Type=Application
+Categories=Utility;Graphics;
+Keywords=annotation;screen;draw;
