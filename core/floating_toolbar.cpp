@@ -62,7 +62,7 @@ FloatingToolbar::FloatingToolbar(QWidget *parent)
 
 void FloatingToolbar::initUi()
 {
-    setFixedSize(Config::TOOLBAR_WIDTH, Config::TOOLBAR_HEIGHT + 12);
+    setFixedSize(Config::TOOLBAR_WIDTH, Config::TOOLBAR_HEIGHT + 25);
 }
 
 QIcon FloatingToolbar::getIcon(const QString &iconName, const QString &fallbackEmoji)
@@ -140,11 +140,18 @@ void FloatingToolbar::setupLayout()
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
 
-    QLabel *dragHandle = new QLabel("⋯⋯⋯", this);
-    dragHandle->setFixedHeight(14);
+    QHBoxLayout *dragHandleLayout = new QHBoxLayout();
+    dragHandleLayout->setContentsMargins(0, 0, 0, 0);
+    dragHandleLayout->addStretch();
+
+    QLabel *dragHandle = new QLabel("———", this);
+    dragHandle->setFixedSize(100, 20);
     dragHandle->setAlignment(Qt::AlignCenter);
-    dragHandle->setStyleSheet("color: rgba(150,150,150,200); font-size: 10px;");
-    mainLayout->addWidget(dragHandle);
+    dragHandle->setStyleSheet("color: rgba(150,150,150,200); font-size: 25px; padding-top: -5px;");
+    dragHandleLayout->addWidget(dragHandle);
+
+    dragHandleLayout->addStretch();
+    mainLayout->addLayout(dragHandleLayout);
 
     QHBoxLayout *contentLayout = new QHBoxLayout();
     contentLayout->setContentsMargins(10, 0, 10, 6);
@@ -269,7 +276,12 @@ void FloatingToolbar::onThicknessChanged(int value)
 void FloatingToolbar::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton) {
-        if (event->position().y() < 16) {
+        int dragHandleWidth = 100;
+        int dragHandleHeight = 20;
+        int dragHandleX = (width() - dragHandleWidth) / 2;
+        if (event->position().y() < dragHandleHeight &&
+            event->position().x() >= dragHandleX &&
+            event->position().x() <= dragHandleX + dragHandleWidth) {
             m_dragPosition = event->globalPosition().toPoint() - frameGeometry().topLeft();
             m_isDragging = true;
             event->accept();
@@ -362,10 +374,21 @@ void FloatingToolbar::paintEvent(QPaintEvent *event)
     Q_UNUSED(event);
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
-    QPainterPath path;
-    QRectF adjustedRect = rect().adjusted(0, 12, 0, 0);
-    path.addRoundedRect(adjustedRect, 12, 12);
-    painter.fillPath(path, QColor(245, 245, 245, 240));
+
+    int dragHandleWidth = 100;
+    int dragHandleHeight = 20;
+    int dragHandleX = (width() - dragHandleWidth) / 2;
+
+    QPainterPath dragHandlePath;
+    QRectF dragHandleRect(dragHandleX, 0, dragHandleWidth, dragHandleHeight);
+    dragHandlePath.addRoundedRect(dragHandleRect, 8, 8);
+    painter.fillPath(dragHandlePath, QColor(230, 230, 230, 220));
+
+    QPainterPath contentPath;
+    QRectF contentRect(0, dragHandleHeight, width(), height() - dragHandleHeight);
+    contentPath.addRoundedRect(contentRect, 12, 12);
+    painter.fillPath(contentPath, QColor(245, 245, 245, 240));
+
     painter.end();
 }
 
